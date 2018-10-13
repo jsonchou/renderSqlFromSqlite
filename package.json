@@ -1,0 +1,24 @@
+{
+  "name": "rendersqlfromsqlite",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsonchou/renderSqlFromSqlite.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jsonchou/renderSqlFromSqlite/issues"
+  },
+  "homepage": "https://github.com/jsonchou/renderSqlFromSqlite#readme",
+  "dependencies": {
+    "fs-extra": "^7.0.0",
+    "request": "^2.88.0",
+    "sqlite": "^3.0.0"
+  }
+}
