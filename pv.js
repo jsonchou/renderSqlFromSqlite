@@ -1,25 +1,30 @@
-import fs from 'fs-extra'
-import request from 'request'
-import sqlite from 'sqlite'
+const fs = require('fs-extra')
+const sqlite = require('sqlite')
 
-const db = await sqlite.open('E:\\perfect-last\\Data\\1587\\SpiderResult.db3');
+const dir = './.tmp/pv.txt'
 
-let keyArrs = await db.all(`SELECT pv_key from Content`)
-
-const path = './tmp/pv.txt'
-
-if (!fs.existsSync(path)) {
-    fs.createFileSync(path)
+if (!fs.existsSync(dir)) {
+    fs.createFileSync(dir)
 }
 
-let proms = keyArrs.map(item => {
-    return fs.writeFileSync(path, `https://baike.baidu.com/api/lemmapv?id=${item}&r=${Date.now()}`)
-})
+let dox = async () => {
+    const db = await sqlite.open('E:/perfect-last/Data/1587/SpiderResult.db3');
 
-Promise.all(proms).then(res => {
-    if (res && res.length) {
+    let keyArrs = await db.all(`SELECT pv_key FROM Content`)
+
+    let proms = keyArrs.map(item => {
+        return fs.appendFileSync(dir, `https://baike.baidu.com/api/lemmapv?id=${item.pv_key}&r=${Date.now()}\r\n`)
+    })
+
+    let sqlArrs = Promise.all(proms).then(res => {
+
+    }).catch(err => {
+        console.error(err)
+    })
+
+    if (sqlArrs && sqlArrs.length) {
         console.info('done!')
     }
-}).catch(err => {
-    console.error(err)
-})
+};
+
+dox()
