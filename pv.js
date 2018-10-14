@@ -33,7 +33,7 @@ let req = async id => {
     }
 }
 
-let update = async (ID, pv) => {
+let update = async (ID, pv=0) => {
     try {
         let res = await db.run("UPDATE Content SET lemma_pv = ? WHERE ID= ? ", pv, ID);
         return res;
