@@ -5,7 +5,7 @@ const rainbow = require('done-rainbow')
 
 const delay = 100;
 
-const limit = 100;
+const limit = 500;
 
 let db
 
@@ -33,9 +33,9 @@ let req = async id => {
     }
 }
 
-let update = async (ID, pv, key) => {
+let update = async (ID, pv) => {
     try {
-        let res = await db.run("UPDATE Content SET lemma_pv = ? WHERE ID= ? AND pv_key = ?", pv, ID, key);
+        let res = await db.run("UPDATE Content SET lemma_pv = ? WHERE ID= ? ", pv, ID);
         return res;
     } catch (error) {
         return error;
@@ -46,18 +46,37 @@ let run = async () => {
 
     db = await sqlite.open('E:/perfect-last/Data/1587/SpiderResult.db3');
 
-    let keyArrs = await db.all(`SELECT ID, pv_key FROM Content where lemma_pv='' limit ${limit}`)
+    let _evt = async () => {
+        let keyArrs = await db.all(`SELECT ID, pv_key FROM Content where lemma_pv = '' limit ${limit}`)
 
-    let proms = keyArrs.map(async item => {
-        let res = await req(item.pv_key)
-        let res2 = await update(item.ID, res.pv, item.pv_key)
-    })
+        if (keyArrs && keyArrs.length) {
 
-    let sqlArrs = await Promise.all(proms).then(res => {
+            let proms = keyArrs.map(async item => {
+                let res = await req(item.pv_key)
+                if (res && res.pv) {
+                    // let sql = `UPDATE Content SET lemma_pv = ${res.pv} WHERE ID= ${item.ID};\r\n`;
+                    // fs.appendFileSync(`./.tmp/update1.sql`, sql)
+                    let res2 = await update(item.ID, res.pv)
+                }
+            })
 
-    }).catch(err => {
-        console.error(err)
-    })
+            let sqlArrs = await Promise.all(proms).then(res => {
+
+            }).catch(err => {
+                console.error(err)
+            })
+
+            _evt();
+
+        } else {
+            console.log(111111)
+            rainbow('all done!')
+            process.exit();
+        }
+
+    }
+
+    await _evt();
 
     console.log('------------------------done!-----------------------------')
 
