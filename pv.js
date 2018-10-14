@@ -4,8 +4,8 @@ const sqlite = require('sqlite')
 const rainbow = require('done-rainbow')
 
 const delay = 100;
-
-const limit = 500;
+const gap = 1500;
+const limit = 100;
 
 let db
 
@@ -33,18 +33,20 @@ let req = async id => {
     }
 }
 
-let update = async (ID, pv=0) => {
+let update = async (ID, pv = 0) => {
     try {
         let res = await db.run("UPDATE Content SET lemma_pv = ? WHERE ID= ? ", pv, ID);
+        // console.log('update res', res)
         return res;
     } catch (error) {
+        console.log('update error', error)
         return error;
     }
 }
 
 let run = async () => {
 
-    db = await sqlite.open('E:/perfect-last/Data/1587/SpiderResult.db3');
+    db = await sqlite.open('d:/pv/SpiderResult.db3');
 
     let _evt = async () => {
         let keyArrs = await db.all(`SELECT ID, pv_key FROM Content where lemma_pv = '' limit ${limit}`)
@@ -66,10 +68,12 @@ let run = async () => {
                 console.error(err)
             })
 
-            _evt();
+            setTimeout(async () => {
+                await _evt();
+            }, gap)
+
 
         } else {
-            console.log(111111)
             rainbow('all done!')
             process.exit();
         }

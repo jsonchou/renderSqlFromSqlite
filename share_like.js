@@ -17,13 +17,13 @@ var sleep = (r) => {
 
 //https://baike.baidu.com/api/wikiui/sharecounter?lemmaId=85897&method=get
 
-let req = async lemmaId => {
+let req = async lemma_new_id => {
     const options = {
         uri: 'https://baike.baidu.com/api/wikiui/sharecounter',
         json: true,
         qs: {
             method: 'get',
-            lemmaId,
+            lemmaId:lemma_new_id,
         }
     };
     try {
@@ -46,15 +46,15 @@ let update = async (ID, like=0, share=0) => {
 
 let run = async () => {
 
-    db = await sqlite.open('E:/perfect-last/Data/1587/SpiderResult.db3');
+    db = await sqlite.open('d:/pv/SpiderResult.db3');
 
     let _evt = async () => {
-        let keyArrs = await db.all(`SELECT ID, lemma_id, lemma_like, lemma_share FROM Content where lemma_like = '' limit ${limit}`)
+        let keyArrs = await db.all(`SELECT ID, lemma_new_id, lemma_like, lemma_share FROM Content where lemma_like = '' limit ${limit}`)
 
         if (keyArrs && keyArrs.length) {
 
             let proms = keyArrs.map(async item => {
-                let res = await req(item.lemma_id)
+                let res = await req(item.lemma_new_id)
                 if (res && res.pv) {
                     // let sql = `UPDATE Content SET lemma_pv = ${res.pv} WHERE ID= ${item.ID};\r\n`;
                     // fs.appendFileSync(`./.tmp/update1.sql`, sql)

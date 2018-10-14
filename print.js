@@ -7,7 +7,7 @@ let base = 50000;
 let index = 1;
 
 let dox = async () => {
-    const db = await sqlite.open('E:/perfect-last/Data/1587/SpiderResult.db3');
+    const db = await sqlite.open('d:/pv/SpiderResult.db3');
 
     let _evt = async () => {
 
