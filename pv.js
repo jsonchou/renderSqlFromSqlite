@@ -3,11 +3,13 @@ const request = require('request-promise')
 const sqlite = require('sqlite')
 const rainbow = require('done-rainbow')
 
-const delay = 100;
-const gap = 1500;
-const limit = 100;
+const delay = 300;
+const gap = 1000*5;
+const limit = 50;
 
 let db
+let upsqls=[];
+let dir = `./.tmp/update1.sql`
 
 var sleep = (r) => {
     return new Promise((resolve) => {
@@ -37,6 +39,7 @@ let update = async (ID, pv = 0) => {
     try {
         let res = await db.run("UPDATE Content SET lemma_pv = ? WHERE ID= ? ", pv, ID);
         // console.log('update res', res)
+        // fs.appendFileSync(dir, `UPDATE Content SET lemma_pv = ${pv} WHERE ID= ${ID}; \r\n`)
         return res;
     } catch (error) {
         console.log('update error', error)
@@ -50,7 +53,7 @@ let run = async () => {
 
     let _evt = async () => {
         let keyArrs = await db.all(`SELECT ID, pv_key FROM Content where lemma_pv = '' limit ${limit}`)
-
+        
         if (keyArrs && keyArrs.length) {
 
             let proms = keyArrs.map(async item => {
