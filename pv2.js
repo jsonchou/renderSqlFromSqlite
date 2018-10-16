@@ -1,14 +1,14 @@
 const fs = require('fs-extra')
 const request = require('request-promise')
-const sqlite = require('sqlite')
+const sqlite = require('better-sqlite3')
 const rainbow = require('done-rainbow')
 
 const delay = 100;
-const gap = 1000*1;
+const gap = 1000 * 1;
 const limit = 100;
 
 let db
-let upsqls=[];
+let upsqls = [];
 let dir = `./.tmp/update1.sql`
 
 var sleep = (r) => {
@@ -37,10 +37,10 @@ let req = async id => {
 
 let update = async (ID, pv = 0) => {
     try {
-        let res = await db.run("UPDATE Content SET lemma_pv = ? WHERE ID= ? ", pv, ID);
+        let sql = db.prepare("UPDATE Content SET lemma_pv = ? WHERE ID= ? ");
         // console.log('update res', res)
         // fs.appendFileSync(dir, `UPDATE Content SET lemma_pv = ${pv} WHERE ID= ${ID}; \r\n`)
-        return res;
+        return sql.run(pv, ID);
     } catch (error) {
         console.log('update error', error)
         return error;
@@ -49,11 +49,16 @@ let update = async (ID, pv = 0) => {
 
 let run = async () => {
 
-    db = await sqlite.open('d:/pv/SpiderResult.db3');
+    db = sqlite('d:/pv/SpiderResult.db3', {
+        timeout: 10000
+    });
+    db.pragma('journal_mode = WAL');
+    db.pragma('cache_size = 32000');
 
     let _evt = async () => {
-        let keyArrs = await db.all(`SELECT ID, pv_key FROM Content where lemma_pv = '' limit ${limit}`)
-        
+        let sql = db.prepare(`SELECT ID, pv_key FROM Content where lemma_pv = ? limit ${limit}`)
+        let keyArrs = sql.all('')
+
         if (keyArrs && keyArrs.length) {
 
             let proms = keyArrs.map(async item => {
