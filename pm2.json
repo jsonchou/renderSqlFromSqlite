@@ -7,7 +7,7 @@
         "error_file": ".log/node-app.stderr.log",
         "out_file": ".log/node-app.stdout.log",
         "pid_file": ".log/node-app-api.pid",
-        "instances": 3,
+        "instances": 1,
         "min_uptime": "200s",
         "max_restarts": 10000,
 		"restart_delay":6000,

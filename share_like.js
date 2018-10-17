@@ -1,11 +1,11 @@
 const fs = require('fs-extra')
 const request = require('request-promise')
-const sqlite = require('sqlite')
+const sqlite = require('better-sqlite3')
 const rainbow = require('done-rainbow')
 
 const delay = 100;
-
-const limit = 500;
+const gap = 1000 * 1;
+const limit = 400;
 
 let db
 

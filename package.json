@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/jsonchou/renderSqlFromSqlite#readme",
   "dependencies": {
+    "async": "^2.6.1",
     "better-sqlite3": "^5.0.1",
     "done-rainbow": "0.0.1",
     "fs-extra": "^7.0.0",

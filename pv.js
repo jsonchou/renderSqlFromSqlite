@@ -5,7 +5,7 @@ const rainbow = require('done-rainbow')
 
 const delay = 100;
 const gap = 1000*1;
-const limit = 100;
+const limit = 150;
 
 let db
 let upsqls=[];
