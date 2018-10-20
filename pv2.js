@@ -6,8 +6,8 @@ const rainbow = require('done-rainbow')
 const asyncExt = require("async");
 
 const delay = 100;
-const gap = 1000 * 1;
-const limit = 200;
+const gap = 1500 * 1;
+const limit = 3000;
 
 let db;
 let upsqls = [];
@@ -30,7 +30,7 @@ let reqPv = async id => {
             }
         };
         try {
-            // await sleep();
+            await sleep();
             const response = await request(options);
             resolve(response)
         } catch (error) {
@@ -50,7 +50,7 @@ let reqShareLike = async lemma_new_id => {
             }
         };
         try {
-            // await sleep();
+            await sleep();
             const response = await request(options);
             resolve(response)
         } catch (error) {
@@ -71,6 +71,31 @@ let update = async (ID, pv = 0, share = 0, like = 0) => {
     })
 }
 
+let _diffTime = async (consoleStart) => {
+
+    var date1 = new Date(consoleStart); //开始时间
+    var date2 = new Date(); //结束时间
+    var date3 = date2.getTime() - new Date(date1).getTime(); //时间差的毫秒数      
+
+    //计算出相差天数
+    var days = Math.floor(date3 / (24 * 3600 * 1000))
+
+    //计算出小时数
+    var leave1 = date3 % (24 * 3600 * 1000) //计算天数后剩余的毫秒数
+    var hours = Math.floor(leave1 / (3600 * 1000))
+
+    //计算相差分钟数
+    var leave2 = leave1 % (3600 * 1000) //计算小时数后剩余的毫秒数
+    var minutes = Math.floor(leave2 / (60 * 1000))
+
+    //计算相差秒数
+    var leave3 = leave2 % (60 * 1000) //计算分钟数后剩余的毫秒数
+    var seconds = Math.round(leave3 / 1000)
+
+    return " " + days + "天 " + hours + "小时 " + minutes + "分钟" + seconds + "秒";
+
+}
+
 let run = async () => {
 
     db = sqlite('d:/pv/SpiderResult.db3', {
@@ -80,8 +105,10 @@ let run = async () => {
     db.pragma('cache_size = 3200');
 
     let _evt = async () => {
-        let sql = db.prepare(`SELECT ID, pv_key, lemma_new_id FROM Content where lemma_pv = ? limit ${limit}`)
+        let rdm = Math.floor(Math.random() * 1000)
+        let sql = db.prepare(`SELECT ID, pv_key, lemma_new_id FROM Content where lemma_pv = ? ORDER BY ID  limit ${limit} offset ${limit*rdm}`)
         let keyArrs = sql.all('')
+        let consoleStart = Date.now();
 
         if (keyArrs && keyArrs.length) {
             asyncExt.mapSeries(keyArrs, async function (item, cb) {
@@ -94,9 +121,11 @@ let run = async () => {
                         return 'null resPv'
                     }
                 },
-                function (err, results) {
+                async function (err, results) {
                     // console.log(results, '\r\n', results.length)
-                    console.log(results.length)
+                    let dt = new Date();
+                    console.log(results.length, `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()} ${dt.getHours()}:${dt.getMinutes()}:${dt.getSeconds()}`)
+                    console.log('run time:', await _diffTime(consoleStart))
                     if (err) {
                         console.log('--------------------------------', err)
                     } else {
