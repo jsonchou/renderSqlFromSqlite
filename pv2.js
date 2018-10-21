@@ -7,7 +7,7 @@ const asyncExt = require("async");
 
 const delay = 100;
 const gap = 1500 * 1;
-const limit = 3000;
+const limit = 5000;
 
 let db;
 let upsqls = [];
@@ -126,6 +126,7 @@ let run = async () => {
                     let dt = new Date();
                     console.log(results.length, `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()} ${dt.getHours()}:${dt.getMinutes()}:${dt.getSeconds()}`)
                     console.log('run time:', await _diffTime(consoleStart))
+					console.log('sql offset:', rdm)
                     if (err) {
                         console.log('--------------------------------', err)
                     } else {
